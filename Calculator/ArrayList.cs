@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Calculator
+namespace CalculatorAlgorithm
 {
-    public class ArrayList
+    public class ArrayList<T>
     {
-        private string[] _array = new string[10];
+        private T[] _array = new T[10];
         private int _pointer = 0;
         
-        public void Add(string element)
+        public void Add(T element)
         {
             _array[_pointer] = element;
             _pointer += 1;
 
             if (_pointer == _array.Length)
             {
-                var extendedArray = new string[_array.Length * 2];
+                var extendedArray = new T[_array.Length * 2];
                 for (var i = 0; i < _array.Length; i++)
                 {
                     extendedArray[i] = _array[i];
@@ -26,11 +26,11 @@ namespace Calculator
             }
         }
 
-        public void Remove(string element)
+        public void Remove(T element)
         {
             for (var i = 0; i < _pointer; i++)
             {
-                if (_array[i] == element)
+                if (EqualityComparer<T>.Default.Equals(_array[i], element))
                 {
                     for (var j = i; j < _pointer - 1; j++)
                     {
@@ -43,16 +43,16 @@ namespace Calculator
             }
         }
 
-        public string GetAt(int index)
+        public T GetAt(int index)
         {
             return _array[index];
         }
 
-        public int IndexOf(string element)
+        public int IndexOf(T element)
         {
             for (var i = 0; i < _pointer; i++)
             {
-                if (_array[i] == element)
+                if (EqualityComparer<T>.Default.Equals(_array[i], element))
                 {
                     return i;
                 }
@@ -61,7 +61,7 @@ namespace Calculator
             return -1;
         }
 
-        public bool Contains(string element)
+        public bool Contains(T element)
         {
             return IndexOf(element) != -1;
         }

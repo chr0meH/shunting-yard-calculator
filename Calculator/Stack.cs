@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Calculator
+namespace CalculatorAlgorithm
 {
     public class Stack
     {
