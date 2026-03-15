@@ -19,17 +19,23 @@ namespace CalculatorAlgorithm
             
 
             //Перевірка на існування змінної
-            bool isVariable(string var)
+            bool isVariable(string var, bool e = true)
             {
-                for(int i = 0; i < _varCount; i++) { if (_variables[i][0] == var) return true; }
-                throw new ArgumentException($"Змінної {var} не існує");
+                for(int i = 0; i < _varCount; i++) if (_variables[i][0] == var) return true;
+                if (e) throw new ArgumentException($"Змінної {var} не існує");
+                else return false;
             }
 
             //Пошук значення змінної
             string FindValue(string varName) 
             {
-                foreach(var variable in _variables) { if (variable[0] == varName) return variable[1]; }
+                for (int i = 0; i < _varCount; i++) if (_variables[i][0] == varName) return _variables[i][1];
                 return "0";
+            }
+
+            void ChangeValue(string varName, string value) 
+            {
+                for(int i = 0; i < _varCount; i++) if (_variables[i][0] == varName) _variables[i][1] = value; 
             }
            
             //Функція що клеїть токен зі значень з буфера та його очищує
@@ -54,10 +60,14 @@ namespace CalculatorAlgorithm
                 input = input.Replace(" ", "");
                 string varName = input.Split('=')[0];
                 string varValue = input.Split('=')[1];
-                _variables[_varCount] = new string[2];
-                _variables[_varCount][0] = varName;
-                _variables[_varCount][1] = FullCalculate(varValue).ToString();
-                _varCount++;
+                if (isVariable(varName, false)) ChangeValue(varName, FullCalculate(varValue).ToString());
+                else
+                {
+                    _variables[_varCount] = new string[2];
+                    _variables[_varCount][0] = varName;
+                    _variables[_varCount][1] = FullCalculate(varValue).ToString();
+                    _varCount++;
+                }
                 tokens.Add(_variables[_varCount - 1][1]);
                 return tokens;
             }
@@ -158,6 +168,7 @@ namespace CalculatorAlgorithm
                             stack.Push((num1 * num2).ToString());
                             break;
                         case "/":
+                            if (num1 == 0) throw new DivideByZeroException("Не можна ділити на 0");
                             stack.Push((num2 / num1).ToString());
                             break;
                         case "^":
@@ -189,16 +200,10 @@ namespace CalculatorAlgorithm
             {
                 Console.WriteLine(FullCalculate(input));
             }
-            catch (ArgumentException ex)
+            catch(Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
-            }
-            catch (Exception e) 
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Сталася невідома помилка");
+                Console.WriteLine(e.Message);
                 Console.ResetColor();
             }
         }
