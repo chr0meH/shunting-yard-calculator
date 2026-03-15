@@ -38,12 +38,10 @@ namespace CalculatorAlgorithm
                 for(int i = 0; i < _varCount; i++) if (_variables[i][0] == varName) _variables[i][1] = value; 
             }
            
-            //Функція що клеїть токен зі значень з буфера та його очищує
             void EmptyBuffer()
             {
                 if (buffer != "")
                 {
-                    // Проверяем, с чего начинается накопленное слово
                     if (char.IsLetter(buffer[0]))
                     {
                         if (isVariable(buffer)) tokens.Add(FindValue(buffer));
