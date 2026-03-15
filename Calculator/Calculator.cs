@@ -13,7 +13,7 @@ namespace CalculatorAlgorithm
 
         static ArrayList<string> Tokenize(string input)
         {
-            ArrayList<string> buffer = new();
+            string buffer = "";
             ArrayList<string> tokens = new();
             char[] operators = ['+', '-', '*', '/', '(', ')', '^'];
             
@@ -22,7 +22,7 @@ namespace CalculatorAlgorithm
             bool isVariable(string var)
             {
                 for(int i = 0; i < _varCount; i++) { if (_variables[i][0] == var) return true; }
-                throw new ArgumentException("Змінної не існує");
+                throw new ArgumentException($"Змінної {var} не існує");
             }
 
             //Пошук значення змінної
@@ -33,16 +33,17 @@ namespace CalculatorAlgorithm
             }
            
             //Функція що клеїть токен зі значень з буфера та його очищує
-            void EmptyBuffer(string token)
+            void EmptyBuffer()
             {
-                if (buffer.Count() != 0)
+                if (buffer != "")
                 {
-                    while (buffer.Count() != 0)
+                    // Проверяем, с чего начинается накопленное слово
+                    if (char.IsLetter(buffer[0]))
                     {
-                        token += buffer.GetAt(0);
-                        buffer.Remove(buffer.GetAt(0));
+                        if (isVariable(buffer)) tokens.Add(FindValue(buffer));
                     }
-                    tokens.Add(token);
+                    else tokens.Add(buffer);
+                    buffer = "";
                 }
             }
 
@@ -63,21 +64,16 @@ namespace CalculatorAlgorithm
             //Основна логіка токенізації
             foreach (char c in input)
             {
-                string token = "";
-                if (char.IsDigit(c)) buffer.Add(c.ToString());
-                else if (char.IsWhiteSpace(c)) EmptyBuffer(token);
+                if (char.IsLetterOrDigit(c)) buffer += c.ToString();
+                else if (char.IsWhiteSpace(c)) EmptyBuffer();
                 else if (operators.Contains(c))
                 {
-                    EmptyBuffer(token);
+                    EmptyBuffer();
                     tokens.Add(c.ToString());
                 }
                 else if (isVariable(c.ToString())) tokens.Add(FindValue(c.ToString()));
             }
-            if (buffer.Count() != 0)
-            {
-                string token = "";
-                EmptyBuffer(token);
-            }
+            EmptyBuffer();
             return tokens;
         }
 
